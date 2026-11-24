@@ -17,7 +17,8 @@
         <button type="button" id="undo" title="Undo (Ctrl+Z)">Undo</button>
         <button type="button" id="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
         <button type="button" id="clear">Clear</button>
-        <label class="button" title="Use a photo as the backdrop">Image<input type="file" id="image-input" accept="image/*" hidden /></label>
+        <button type="button" id="fit" title="Reset zoom (0)">Fit</button>
+        <label class="button" title="Use a photo as the backdrop">Photo<input type="file" id="image-input" accept="image/*" hidden /></label>
         <button type="button" id="export" class="primary">Export PNG</button>
         <button type="button" id="export-all">Export with backdrop</button>
       </div>
@@ -34,16 +35,19 @@
         <canvas id="backdrop" aria-hidden="true"></canvas>
         <canvas id="strokes" aria-label="Drawing canvas"></canvas>
       </div>
-      <p class="hint" id="hint">Draw anywhere. Slow strokes come out thicker.</p>
+      <p class="hint" id="hint">Draw anywhere. Slow strokes come out thicker. Pinch or Ctrl + scroll to zoom.</p>
     </main>
 
     <aside class="panel controls" aria-label="Brush controls">
-      <h2>Brush</h2>
+      <div class="edit-banner" id="edit-banner" hidden>
+        <span id="edit-label">Editing layer</span>
+        <button type="button" id="edit-done">Done</button>
+      </div>
+      <h2 id="brush-heading">Brush</h2>
       <label class="field color-field">Colour <input type="color" id="color" /></label>
       <label class="field">Size <output id="size-out"></output><input type="range" id="size" min="3" max="90" value="20" /></label>
       <label class="field">Relief <output id="relief-out"></output><input type="range" id="relief" min="20" max="200" value="100" /></label>
       <label class="field">Grain <output id="grain-out"></output><input type="range" id="grain" min="0" max="200" value="100" /></label>
-      <button type="button" id="restyle" title="Apply the current material and settings to the last stroke">Restyle last stroke</button>
 
       <h2>Light</h2>
       <label class="field">Direction <output id="angle-out"></output><input type="range" id="angle" min="0" max="359" value="135" /></label>
@@ -53,6 +57,7 @@
       <div class="toggles">
         <button type="button" id="mirror-x" class="tool-toggle" aria-pressed="false" title="Mirror left–right (X)">Mirror ↔</button>
         <button type="button" id="mirror-y" class="tool-toggle" aria-pressed="false" title="Mirror top–bottom (Y)">Mirror ↕</button>
+        <button type="button" id="stack" class="tool-toggle wide" aria-pressed="true" title="On: new strokes lie on top of earlier ones. Off: they melt into them.">Stack on layers below</button>
       </div>
       <label class="field">Backdrop
         <select id="backdrop-kind">
@@ -60,9 +65,14 @@
           <option value="dots">Dot grid</option>
           <option value="stripes">Stripes</option>
           <option value="dark">Dark</option>
-          <option value="image" disabled>Photo</option>
+          <option value="image" disabled>Photo (fill)</option>
+          <option value="framed" disabled>Photo (framed)</option>
         </select>
       </label>
+
+      <h2>Layers</h2>
+      <ol class="layers" id="layers" aria-label="Layers, top first"></ol>
+      <p class="layers-empty" id="layers-empty">Each stroke becomes a layer. Select one to change its material, colour, size, relief or grain.</p>
     </aside>
   </body>
 </html>
