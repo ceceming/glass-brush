@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Glass Brush</title>
+    <meta name="description" content="Draw strokes that turn into glass, chrome, glaze, clay, stone and more. Runs in the browser." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script src="js/engine.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Glass Brush</div>
+      <div class="actions">
+        <button type="button" id="undo" title="Undo (Ctrl+Z)">Undo</button>
+        <button type="button" id="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+        <button type="button" id="clear">Clear</button>
+        <label class="button" title="Use a photo as the backdrop">Image<input type="file" id="image-input" accept="image/*" hidden /></label>
+        <button type="button" id="export" class="primary">Export PNG</button>
+        <button type="button" id="export-all">Export with backdrop</button>
+      </div>
+    </header>
+
+    <aside class="panel materials" aria-label="Materials">
+      <h2>Material</h2>
+      <div id="material-list" class="material-list" role="radiogroup" aria-label="Material"></div>
+      <button type="button" id="eraser" class="tool-toggle" aria-pressed="false" title="Eraser (E)">Eraser</button>
+    </aside>
+
+    <main class="stage" id="stage">
+      <div class="board" id="board">
+        <canvas id="backdrop" aria-hidden="true"></canvas>
+        <canvas id="strokes" aria-label="Drawing canvas"></canvas>
+      </div>
+      <p class="hint" id="hint">Draw anywhere. Slow strokes come out thicker.</p>
+    </main>
+
+    <aside class="panel controls" aria-label="Brush controls">
+      <h2>Brush</h2>
+      <label class="field color-field">Colour <input type="color" id="color" /></label>
+      <label class="field">Size <output id="size-out"></output><input type="range" id="size" min="3" max="90" value="20" /></label>
+      <label class="field">Relief <output id="relief-out"></output><input type="range" id="relief" min="20" max="200" value="100" /></label>
+      <label class="field">Grain <output id="grain-out"></output><input type="range" id="grain" min="0" max="200" value="100" /></label>
+      <button type="button" id="restyle" title="Apply the current material and settings to the last stroke">Restyle last stroke</button>
+
+      <h2>Light</h2>
+      <label class="field">Direction <output id="angle-out"></output><input type="range" id="angle" min="0" max="359" value="135" /></label>
+      <label class="field">Height <output id="elev-out"></output><input type="range" id="elev" min="10" max="85" value="45" /></label>
+
+      <h2>Canvas</h2>
+      <div class="toggles">
+        <button type="button" id="mirror-x" class="tool-toggle" aria-pressed="false" title="Mirror left–right (X)">Mirror ↔</button>
+        <button type="button" id="mirror-y" class="tool-toggle" aria-pressed="false" title="Mirror top–bottom (Y)">Mirror ↕</button>
+      </div>
+      <label class="field">Backdrop
+        <select id="backdrop-kind">
+          <option value="paper">Paper</option>
+          <option value="dots">Dot grid</option>
+          <option value="stripes">Stripes</option>
+          <option value="dark">Dark</option>
+          <option value="image" disabled>Photo</option>
+        </select>
+      </label>
+    </aside>
+  </body>
+</html>
