@@ -46,7 +46,7 @@ Then open <http://localhost:8000>. Opening `index.html` straight from disk also 
    midpoints, so fast strokes don't show creases.
 3. **Height field.** Along the path, the engine stamps discs into a per-pixel height
    buffer using a profile: a round tube (`√(1−t²)`), a flat slab for stone, or a soft
-   mound for emboss. Heights are max-merged, so overlapping strokes fuse into one form.
+   mound for emboss. With stacking off, heights are max-merged and strokes fuse into one form.
    A coverage buffer keeps edges anti-aliased, and an owner buffer records which
    stroke is on top. A stacking stroke reads the height of the layers below it and
    rests on them. The lift is sampled in rings around each stamp and smoothed along
@@ -71,5 +71,5 @@ Then open <http://localhost:8000>. Opening `index.html` straight from disk also 
    matches the live drawing pixel for pixel.
 
 To add a material, add an entry to `MATERIALS` in `js/engine.js`. Give it a `shade`
-model (`phong`, `metal`, `glass` or `pearl`), a `profile`, and optionally a `stamp`
+model (`phong`, `metal`, `glass`, `pearl` or `stipple`), a `profile`, and optionally a `stamp`
 type. It shows up in the picker with a rendered preview automatically.
