@@ -521,14 +521,41 @@
 
   /* ---------- export ---------- */
 
-  function download(canvas, name) {
-    return new Promise(resolve => canvas.toBlob(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = name;
-      document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-      resolve();
-    }, 'image/png'));
+  // On claude.ai the page can't start downloads itself, so files go through the
+  // viewer's save dialog. Opened locally, an ordinary download link is used.
+  const downloadsReady = window.claude && window.claude.use
+    ? window.claude.use('downloads').catch(() => null)
+    : Promise.resolve(null);
+
+  let noticeTimer = 0;
+  function notice(text) {
+    const hint = $('hint');
+    hint.textContent = text;
+    hint.classList.remove('gone');
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => hint.classList.add('gone'), 3500);
+  }
+
+  async function download(canvas, name) {
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (window.claude) {
+      const downloads = await downloadsReady;
+      if (!downloads) { notice("Saving files isn't available in this view."); return; }
+      try {
+        await downloads.save({ filename: name, data: blob });
+        notice(`Saved ${name}`);
+      } catch (err) {
+        if (err && err.code === 'declined') return;
+        if (err && err.code === 'rate_limited') notice('A save is already waiting for your answer.');
+        else if (err && err.code === 'host_unavailable') notice('This app cannot save files. Open the page in a browser to export.');
+        else notice("The image couldn't be saved. Try again.");
+      }
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
   // Re-renders every layer from scratch at k× resolution for a crisp export.
